@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,10 +64,9 @@ public class FileUploadController {
                 .path(name)
                 .toUriString();
 
-        File savedFile = new File(uri); // path to pdf
         String text = null;
         try {
-            PDDocument document = PDDocument.load(savedFile);
+            PDDocument document = PDDocument.load(storageService.load(name).toFile());
             PDFTextStripper pdfStripper = new PDFTextStripper();
             text = pdfStripper.getText(document);
             document.close();
