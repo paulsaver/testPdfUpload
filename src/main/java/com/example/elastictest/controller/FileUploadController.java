@@ -83,7 +83,7 @@ public class FileUploadController {
             pdfDocumentRepository.save(pdfDocument);
 
             IndexQuery indexQuery = new IndexQueryBuilder()
-                    .withId(pdfDocument.getId().toString())
+                    .withId(pdfDocument.getId())
                     .withObject(pdfDocument)
                     .build();
             documentId = elasticsearchOperations.index(indexQuery);

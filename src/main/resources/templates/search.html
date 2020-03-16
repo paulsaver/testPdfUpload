@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h1>Spring Boot File Search</h1>
+
+<h4>Search Files:</h4>
+<form method="POST" th:action="@{/search-by-text}">
+    <input type="text" name="search">
+    <button type="submit">Search!</button>
+</form>
+
+<hr/>
+
+<h2>Search results:</h2>
+<ul>
+    <li th:each="file : ${files}">
+        <p th:utext="${file.getText()}">></p>
+    </li>
+</ul>
+
+</body>
+</html>

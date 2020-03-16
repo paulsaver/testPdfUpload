@@ -8,7 +8,7 @@ import javax.persistence.Id;
 public class PdfDocument {
 
     @Id
-    private Long id;
+    private String id;
     private String name;
     private String text;
 
@@ -20,11 +20,11 @@ public class PdfDocument {
         this.text = text;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,5 +42,15 @@ public class PdfDocument {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PdfDocument{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", text='").append(text).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
