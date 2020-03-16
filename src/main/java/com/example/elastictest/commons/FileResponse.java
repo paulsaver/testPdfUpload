@@ -4,12 +4,16 @@ public class FileResponse {
     private String name;
     private String uri;
     private String type;
+    private String text;
+    private String docId;
     private long size;
 
-    public FileResponse(String name, String uri, String type, long size) {
+    public FileResponse(String name, String uri, String type, String text, String docId, long size) {
         this.name = name;
         this.uri = uri;
         this.type = type;
+        this.text = text;
+        this.docId = docId;
         this.size = size;
     }
 
@@ -35,6 +39,22 @@ public class FileResponse {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
     }
 
     public long getSize() {
