@@ -2,6 +2,8 @@ package com.example.elastictest.controller;
 
 import com.example.elastictest.commons.FileResponse;
 import com.example.elastictest.storage.StorageService;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +63,20 @@ public class FileUploadController {
                 .path(name)
                 .toUriString();
 
-        return new FileResponse(name, uri, file.getContentType(), file.getSize());
+        File savedFile = new File(uri); // path to pdf
+        String text = null;
+        try {
+            PDDocument document = PDDocument.load(savedFile);
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            text = pdfStripper.getText(document);
+            document.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return new FileResponse(name, uri, text, file.getSize());
     }
 
     @PostMapping("/upload-multiple-files")
