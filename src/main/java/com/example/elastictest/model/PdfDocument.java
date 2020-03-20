@@ -1,6 +1,8 @@
 package com.example.elastictest.model;
 
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.Id;
 
@@ -9,15 +11,23 @@ public class PdfDocument {
 
     @Id
     private String id;
+
+    @Field(type = FieldType.Text)
     private String name;
+
+    @Field(type = FieldType.Text)
     private String text;
+
+    @Field(type = FieldType.Keyword)
+    private String[] customer;
 
     public PdfDocument() {
     }
 
-    public PdfDocument(String name, String text) {
+    public PdfDocument(String name, String text, String[] customer) {
         this.name = name;
         this.text = text;
+        this.customer = customer;
     }
 
     public String getId() {
@@ -42,6 +52,14 @@ public class PdfDocument {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String[] getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(String[] customer) {
+        this.customer = customer;
     }
 
     @Override

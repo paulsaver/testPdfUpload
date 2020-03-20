@@ -7,6 +7,10 @@
 <h4>Search Files:</h4>
 <form method="POST" th:action="@{/search-by-text}">
     <input type="text" name="search">
+    <li th:each="tag : ${allTags}">
+        <input type="checkbox" name="customerTags" th:value="${tag.value}" />
+        <label th:text="${tag.value}"></label>
+    </li>
     <button type="submit">Search!</button>
 </form>
 

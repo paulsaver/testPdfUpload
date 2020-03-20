@@ -1,0 +1,13 @@
+package com.example.elastictest.repos;
+
+import com.example.elastictest.model.Tag;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface TagRepository extends JpaRepository<Tag, Long> {
+
+    List<Tag> findAllByValue(String value);
+
+    boolean existsByValue(String value);
+}

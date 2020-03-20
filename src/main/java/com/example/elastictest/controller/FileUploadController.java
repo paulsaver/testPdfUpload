@@ -1,8 +1,9 @@
 package com.example.elastictest.controller;
 
-import com.example.elastictest.commons.FileResponse;
 import com.example.elastictest.model.PdfDocument;
+import com.example.elastictest.model.Tag;
 import com.example.elastictest.repos.PdfDocumentRepository;
+import com.example.elastictest.repos.TagRepository;
 import com.example.elastictest.storage.StorageService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -18,9 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -29,11 +29,16 @@ public class FileUploadController {
     private StorageService storageService;
     private ElasticsearchOperations elasticsearchOperations;
     private PdfDocumentRepository pdfDocumentRepository;
+    private TagRepository tagRepository;
 
-    public FileUploadController(StorageService storageService, ElasticsearchOperations elasticsearchOperations, PdfDocumentRepository pdfDocumentRepository) {
+    public FileUploadController(StorageService storageService,
+                                ElasticsearchOperations elasticsearchOperations,
+                                PdfDocumentRepository pdfDocumentRepository,
+                                TagRepository tagRepository) {
         this.storageService = storageService;
         this.elasticsearchOperations = elasticsearchOperations;
         this.pdfDocumentRepository = pdfDocumentRepository;
+        this.tagRepository = tagRepository;
     }
 
     @GetMapping("/")
@@ -63,7 +68,7 @@ public class FileUploadController {
 
     @PostMapping("/upload-file")
     @ResponseBody
-    public FileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("customer") String customer, HttpServletResponse httpResponse) {
         String name = storageService.store(file);
 
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -79,7 +84,13 @@ public class FileUploadController {
             text = pdfStripper.getText(document);
             document.close();
 
-            PdfDocument pdfDocument = new PdfDocument(name, text);
+            String[] tags = customer.split(",");
+            for (String tag : tags) {
+                if (!tagRepository.existsByValue(tag)) {
+                    tagRepository.save(new Tag(tag));
+                }
+            }
+            PdfDocument pdfDocument = new PdfDocument(name, text, tags);
             pdfDocumentRepository.save(pdfDocument);
 
             IndexQuery indexQuery = new IndexQueryBuilder()
@@ -93,15 +104,21 @@ public class FileUploadController {
         }
 
 
-        return new FileResponse(name, uri, file.getContentType(), documentId,  text, file.getSize());
+//        return new FileResponse(name, uri, file.getContentType(), documentId,  text, file.getSize());
+        try {
+            httpResponse.sendRedirect("/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @PostMapping("/upload-multiple-files")
-    @ResponseBody
-    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.stream(files)
-                .map(file -> uploadFile(file))
-                .collect(Collectors.toList());
-    }
+//    @PostMapping("/upload-multiple-files")
+//    @ResponseBody
+//    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+//        return Arrays.stream(files)
+//                .map(file -> uploadFile(file))
+//                .collect(Collectors.toList());
+//    }
 
 }
