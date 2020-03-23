@@ -1,10 +1,14 @@
 package com.example.elastictest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
+import java.util.Date;
 
 @Document(indexName = "sample", type = "pdfdocument")
 public class PdfDocument {
@@ -21,13 +25,20 @@ public class PdfDocument {
     @Field(type = FieldType.Keyword)
     private String[] customer;
 
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date date;
+
     public PdfDocument() {
     }
 
-    public PdfDocument(String name, String text, String[] customer) {
+    public PdfDocument(String name, String text, String[] customer, Date date
+    ) {
         this.name = name;
         this.text = text;
         this.customer = customer;
+        this.date = date;
     }
 
     public String getId() {
@@ -60,6 +71,14 @@ public class PdfDocument {
 
     public void setCustomer(String[] customer) {
         this.customer = customer;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

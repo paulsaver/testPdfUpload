@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Controller
@@ -68,7 +70,10 @@ public class FileUploadController {
 
     @PostMapping("/upload-file")
     @ResponseBody
-    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("customer") String customer, HttpServletResponse httpResponse) {
+    public String uploadFile(@RequestParam("file") MultipartFile file,
+                             @RequestParam("customer") String customer,
+                             @RequestParam("doc_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date doc_date,
+                             HttpServletResponse httpResponse) {
         String name = storageService.store(file);
 
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -76,8 +81,7 @@ public class FileUploadController {
                 .path(name)
                 .toUriString();
 
-        String text = null;
-        String documentId = null;
+        String text;
         try {
             PDDocument document = PDDocument.load(storageService.load(name).toFile());
             PDFTextStripper pdfStripper = new PDFTextStripper();
@@ -90,21 +94,21 @@ public class FileUploadController {
                     tagRepository.save(new Tag(tag));
                 }
             }
-            PdfDocument pdfDocument = new PdfDocument(name, text, tags);
+            System.out.println(doc_date);
+            System.out.println(doc_date.toString());
+            PdfDocument pdfDocument = new PdfDocument(name, text, tags, doc_date);
             pdfDocumentRepository.save(pdfDocument);
 
             IndexQuery indexQuery = new IndexQueryBuilder()
                     .withId(pdfDocument.getId())
                     .withObject(pdfDocument)
                     .build();
-            documentId = elasticsearchOperations.index(indexQuery);
+            elasticsearchOperations.index(indexQuery);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-//        return new FileResponse(name, uri, file.getContentType(), documentId,  text, file.getSize());
         try {
             httpResponse.sendRedirect("/");
         } catch (IOException e) {
