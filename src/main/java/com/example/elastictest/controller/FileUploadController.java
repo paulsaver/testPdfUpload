@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class FileUploadController {
     @ResponseBody
     public String uploadFile(@RequestParam("file") MultipartFile file,
                              @RequestParam("customer") String customer,
-                             @RequestParam("doc_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date doc_date,
+                             @RequestParam("doc_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date doc_date,
                              HttpServletResponse httpResponse) {
         String name = storageService.store(file);
 
@@ -94,9 +95,12 @@ public class FileUploadController {
                     tagRepository.save(new Tag(tag));
                 }
             }
-            System.out.println(doc_date);
-            System.out.println(doc_date.toString());
-            PdfDocument pdfDocument = new PdfDocument(name, text, tags, doc_date);
+
+            String pattern = "yyyy-MM-dd";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            String date = simpleDateFormat.format(doc_date);
+
+            PdfDocument pdfDocument = new PdfDocument(name, text, tags, date);
             pdfDocumentRepository.save(pdfDocument);
 
             IndexQuery indexQuery = new IndexQueryBuilder()
@@ -116,13 +120,5 @@ public class FileUploadController {
         }
         return null;
     }
-
-//    @PostMapping("/upload-multiple-files")
-//    @ResponseBody
-//    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-//        return Arrays.stream(files)
-//                .map(file -> uploadFile(file))
-//                .collect(Collectors.toList());
-//    }
 
 }

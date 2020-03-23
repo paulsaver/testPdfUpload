@@ -10,17 +10,11 @@
 <form method="POST" enctype="multipart/form-data" th:action="@{/upload-file}">
     <input type="file" name="file"> <br/>
     Specify Customer tags (comma separated): <input type="text" name="customer"><br/>
-    Specify Date: <input type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" id="doc_date" th:name="doc_date">
+    Specify Date: <input type="date" id="doc_date" th:name="doc_date">
     <button type="submit">Submit</button>
 </form>
 
 <hr/>
-
-<!--<h4>Upload Multiple Files (DON'T USE, NOT INDEX):</h4>-->
-<!--<form method="POST" enctype="multipart/form-data" th:action="@{/upload-multiple-files}">-->
-<!--    <input type="file" name="files" multiple> <br/><br/>-->
-<!--    <button type="submit">Submit</button>-->
-<!--</form>-->
 
 <hr/>
 

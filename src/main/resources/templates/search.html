@@ -6,11 +6,14 @@
 
 <h4>Search Files:</h4>
 <form method="POST" th:action="@{/search-by-text}">
-    <input type="text" name="search">
+    <input type="text" name="search"><br/>
+    Start date: <input type="date" name="startDate"><br/>
+    End date: <input type="date" name="endDate"><br/>
     <li th:each="tag : ${allTags}">
         <input type="checkbox" name="customerTags" th:value="${tag.value}" />
         <label th:text="${tag.value}"></label>
     </li>
+    <br/>
     <button type="submit">Search!</button>
 </form>
 
