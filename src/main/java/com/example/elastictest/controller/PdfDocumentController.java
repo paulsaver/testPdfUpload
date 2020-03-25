@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/document")
+@RestController
+@RequestMapping("/document")
 public class PdfDocumentController {
 
     private PdfDocumentService pdfDocumentService;
