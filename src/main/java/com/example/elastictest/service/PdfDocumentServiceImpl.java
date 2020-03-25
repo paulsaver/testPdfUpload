@@ -41,6 +41,11 @@ public class PdfDocumentServiceImpl implements PdfDocumentService {
     }
 
     @Override
+    public PdfDocument create(PdfDocument pdfDocument) {
+        return pdfDocumentRepository.save(pdfDocument);
+    }
+
+    @Override
     public PdfDocument save(PdfDocument pdfDocument) {
         return pdfDocumentRepository.findById(pdfDocument.getId())
                 .map(doc -> {

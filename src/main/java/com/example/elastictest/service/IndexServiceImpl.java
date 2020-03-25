@@ -57,7 +57,7 @@ public class IndexServiceImpl implements IndexService{
             String date = simpleDateFormat.format(docDate);
 
             PdfDocument pdfDocument = new PdfDocument(name, text, tags, date);
-            pdfDocumentService.save(pdfDocument);
+            pdfDocumentService.create(pdfDocument);
 
             IndexQuery indexQuery = new IndexQueryBuilder()
                     .withId(pdfDocument.getId())

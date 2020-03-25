@@ -14,5 +14,7 @@ public interface PdfDocumentService {
 
     void deleteAll();
 
+    PdfDocument create(PdfDocument pdfDocument);
+
     PdfDocument save(PdfDocument pdfDocument);
 }
