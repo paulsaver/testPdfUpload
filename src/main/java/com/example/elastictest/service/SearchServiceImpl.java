@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
         SearchQuery searchQuery;
 
         NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder()
-                .withQuery(matchQuery("text", searchRestPOJO.getSearch()));
+                .withQuery(matchQuery("text", searchRestPOJO.getSearch() == null ? "" : searchRestPOJO.getSearch()));
         BoolQueryBuilder boolQueryBuilder = boolQuery();
         if (searchRestPOJO.getCustomerTags() != null && searchRestPOJO.getCustomerTags().size() != 0) {
             for (String customerTag : searchRestPOJO.getCustomerTags()) {
